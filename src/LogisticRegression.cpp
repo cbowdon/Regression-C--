@@ -11,7 +11,8 @@ using namespace std;
 struct ml::LogisticRegression::impl
 {
 	const double alpha = 0.1; // learning rate
-	const double tolerance = 1e-6;
+	const double tolerance = 1e-5;
+	const size_t step_limit = 1e5;
 
 	Mat2d params;
 
@@ -19,6 +20,7 @@ struct ml::LogisticRegression::impl
 	const double predict (const Mat2d& features) const;
 
 	void batch_descent (const Mat2d& features, const Mat2d& targets);
+	void stochastic_descent (const Mat2d& features, const Mat2d& targets);
 
 	const double sigmoid (double value) const; // hypothesis
 	const double hyp (double x, double theta) const;
@@ -31,6 +33,7 @@ void ml::LogisticRegression::impl::batch_descent (const Mat2d& features, const M
 	for (size_t j = 0; j < params.cols; j++)
 	{
 		double update = 0;
+		size_t steps = 0;
 		do
 		{
 			Mat2d guess(targets.size());
@@ -42,8 +45,30 @@ void ml::LogisticRegression::impl::batch_descent (const Mat2d& features, const M
 
 			params.at<double>(j) += update;
 		}
-		while (update > tolerance);
+		while (steps++ < step_limit && update > tolerance);
+		cout << "Steps: " << steps << ", update: " << update << endl;
 	}
+	cout << endl;
+}
+
+void ml::LogisticRegression::impl::stochastic_descent (const Mat2d& features, const Mat2d& targets)
+{
+	for (size_t m = 0; m < targets.rows; m++)
+	{
+		for (size_t i = 0; i < params.cols; i++)
+		{
+			double update = 0;
+			size_t steps = 0;
+			do
+			{
+				update = alpha * (targets.at<double>(m)) - predict(features.rowRange(m, m+1)) * features.at<double>(m, i);
+				params.at<double>(i) += update;
+			}
+			while (steps++ < step_limit && update > tolerance);
+			cout << "Steps: " << steps << ", update: " << update << endl;
+		}
+	}
+	cout << endl;
 }
 
 const double ml::LogisticRegression::impl::sigmoid (double value) const
@@ -55,9 +80,12 @@ void ml::LogisticRegression::impl::train (const Mat2d& features, const Mat2d& ta
 {
 	assert(targets.cols == 1);
 	assert(features.rows == targets.rows);
-	params = Mat2d::zeros(1, features.cols);
 
+	params = Mat2d::zeros(1, features.cols);
 	batch_descent(features, targets);
+
+	params = Mat2d::zeros(1, features.cols);
+	stochastic_descent(features, targets);
 }
 
 const double ml::LogisticRegression::impl::predict (const Mat2d& features) const
