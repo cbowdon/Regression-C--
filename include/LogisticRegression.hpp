@@ -17,8 +17,9 @@ namespace ml
 			LogisticRegression ();
 			~LogisticRegression ();
 
-			void train (const Mat2d features, const Mat2d targets);
-			const double predict (const Mat2d features) const;
+			void train (const Mat2d& features, const Mat2d& targets);
+			const double predict (const Mat2d& features) const;
+			const Mat2d& get_params () const;
 
 		private:
 			struct impl;
