@@ -28,13 +28,12 @@ int main (int argc, char** argv)
 	machine.train(features, targets);
 
 	std::cout << "Params:\n" << machine.get_params() << std::endl;
-	// expecting params like [0, 1, 1]
 
 	std::cout << "Predictions:\n" << std::endl;
 	std::cout << "00:\t" << machine.predict(test0) << std::endl;
 	std::cout << "01:\t" << machine.predict(test1) << std::endl;
-	std::cout << "11:\t" << machine.predict(test2) << std::endl;
-	std::cout << "10:\t" << machine.predict(test3) << std::endl;
+	std::cout << "10:\t" << machine.predict(test2) << std::endl;
+	std::cout << "11:\t" << machine.predict(test3) << std::endl;
 
 	return EXIT_SUCCESS;
 }

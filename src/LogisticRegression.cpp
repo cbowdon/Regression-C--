@@ -11,8 +11,8 @@ using namespace std;
 struct ml::LogisticRegression::impl
 {
 	const double alpha = 0.1; // learning rate
-	const double tolerance = 1e-5;
-	const size_t step_limit = 1e5;
+	const double tolerance = 1e-6;
+	const size_t step_limit = 1e6;
 
 	Mat2d params;
 
@@ -92,7 +92,12 @@ void ml::LogisticRegression::impl::train (const Mat2d& features, const Mat2d& ta
 	Mat2d biased(insert_bias(features));
 
 	params = Mat2d::zeros(1, biased.cols);
+
+	cout << "Stochastic descent" << endl;
 	stochastic_descent(biased, targets);
+
+//	cout << "Batch descent" << endl;
+//	batch_descent(biased, targets);
 }
 
 const double ml::LogisticRegression::impl::predict (const Mat2d& features) const
