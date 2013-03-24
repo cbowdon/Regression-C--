@@ -1,7 +1,7 @@
 # Run from binaries directory
 
 CXX = c++
-CXXFLAGS = -std=c++11 -stdlib=libc++ -Wall -g
+CXXFLAGS = -std=c++11 -stdlib=libc++ -Wall #-g
 LDFLAGS = -I include -I include/test
 OPENCV_LIBS = -L /usr/local/lib/ -lopencv_core -lopencv_highgui -lopencv_video -lopencv_imgproc
 

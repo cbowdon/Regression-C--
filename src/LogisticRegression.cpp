@@ -2,17 +2,19 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <complex>
 
 using namespace std;
 
 // impl header
 struct ml::LogisticRegression::impl
 {
-	const double alpha = 0.1; // learning rate
+	const double alpha = 0.02;
 	const double tolerance = 1e-6;
-	const size_t step_limit = 1e6;
+	const size_t step_limit = 1e4;
 
 	Mat2d params;
 
@@ -23,55 +25,49 @@ struct ml::LogisticRegression::impl
 	void batch_descent (const Mat2d& features, const Mat2d& targets);
 	void stochastic_descent (const Mat2d& features, const Mat2d& targets);
 
-	const double sigmoid (double value) const; // hypothesis function
+	const double hypothesis (const Mat2d& params, const Mat2d& features) const;
+	const double sigmoid (double value) const;
 };
 
 // impl definition
 
-void ml::LogisticRegression::impl::batch_descent (const Mat2d& features, const Mat2d& targets)
+const double ml::LogisticRegression::impl::hypothesis (const Mat2d& params, const Mat2d& features) const
 {
-	for (size_t j = 0; j < params.cols; j++)
-	{
-		double update = 0;
-		size_t steps = 0;
-		do
-		{
-			Mat2d guess(targets.size());
-			for (size_t m = 0; m < targets.rows; m++)
-			{
-				guess.at<double>(m) = (targets.at<double>(m) - predict(features.rowRange(m, m + 1))) * features.at<double>(m, j);
-			}
-			update = alpha * accumulate(begin(guess), end(guess), 0.0);
-
-			params.at<double>(j) += update;
-		}
-		while (steps++ < step_limit && update > tolerance);
-	}
-	cout << endl;
-}
-
-void ml::LogisticRegression::impl::stochastic_descent (const Mat2d& features, const Mat2d& targets)
-{
-	for (size_t m = 0; m < targets.rows; m++)
-	{
-		for (size_t i = 0; i < params.cols; i++)
-		{
-			double update = 0;
-			size_t steps = 0;
-			do
-			{
-				update = alpha * (targets.at<double>(m)) - predict(features.rowRange(m, m+1)) * features.at<double>(m, i);
-				params.at<double>(i) += update;
-			}
-			while (steps++ < step_limit && update > tolerance);
-		}
-	}
-	cout << endl;
+	// to do linear regression, just let hypothesis = params . features
+	return sigmoid(params.dot(features));
 }
 
 const double ml::LogisticRegression::impl::sigmoid (double value) const
 {
 	return 1.0 / (1.0 + exp(-value));
+}
+
+void ml::LogisticRegression::impl::batch_descent (const Mat2d& features, const Mat2d& targets)
+{
+	for (size_t step = 0; step < step_limit; step++)
+	{
+		params += (features.t() * (targets - features * params.t())).t() * alpha / targets.rows;
+		// TODO adapt this for alternative hypotheses
+		// TODO abort when change in params or cost function is < tolerance
+	}
+}
+
+void ml::LogisticRegression::impl::stochastic_descent (const Mat2d& features, const Mat2d& targets)
+{
+	for (size_t step = 0; step < step_limit; step++)
+	{
+		for (size_t i = 0; i < targets.rows; i++)
+		{
+			Mat2d temp(params.size());
+			for (size_t j = 0; j < params.cols; j++)
+			{
+				double update = features.at<double>(i,j) * (targets.at<double>(i) - hypothesis(params, features.rowRange(i, i+1))) * alpha / targets.rows;
+				temp.at<double>(j) = update;
+			}
+			params += temp;
+		}
+		// TODO abort when change in params or cost function is < tolerance
+	}
 }
 
 const ml::Mat2d ml::LogisticRegression::impl::insert_bias (const Mat2d& features) const
@@ -103,7 +99,7 @@ void ml::LogisticRegression::impl::train (const Mat2d& features, const Mat2d& ta
 const double ml::LogisticRegression::impl::predict (const Mat2d& features) const
 {
 	// Assume bias element present
-	return sigmoid(params.dot(features));
+	return hypothesis(params, features);
 }
 
 // Logistic Regression definition
