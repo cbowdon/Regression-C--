@@ -12,6 +12,7 @@ using namespace std;
 // impl header
 struct ml::LogisticRegression::impl
 {
+	// Careful with alpha! A high learning rate will overshoot the optimum and mystify you.
 	const double alpha = 0.02;
 	const double tolerance = 1e-6;
 	const size_t step_limit = 1e4;
