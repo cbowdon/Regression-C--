@@ -9,8 +9,8 @@ RM = rm -f
 MV = mv a.out
 
 main_entry_point = main.cpp
-main_assemblies = LogisticRegression.o
-main_executable = main.lr
+main_assemblies = Regression.o
+main_executable = main.ml
 
 vpath %.hpp include include/test
 vpath %.cpp src src/test

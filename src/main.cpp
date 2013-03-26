@@ -1,17 +1,17 @@
 #include <string>
 #include <iostream>
 #include <opencv2/core/core.hpp>
-#include "LogisticRegression.hpp"
+#include "Regression.hpp"
 
 using namespace ml;
 using namespace std;
 
 void test_lin ()
 {
-	LogisticRegression machine;
+	LinearRegression machine;
 
-	Mat2d features = (Mat2d(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	Mat2d targets = (Mat2d(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	Matd features = (Matd(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	Matd targets = (Matd(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 	machine.train(features, targets);
 
@@ -20,10 +20,10 @@ void test_lin ()
 
 void test_lin2 ()
 {
-	LogisticRegression machine;
+	LinearRegression machine;
 
-	Mat2d features = (Mat2d(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	Mat2d targets = (Mat2d(10, 1) << -2, -4, -6, -8, -10, -12, -14, -16, -18, -20);
+	Matd features = (Matd(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	Matd targets = (Matd(10, 1) << -2, -4, -6, -8, -10, -12, -14, -16, -18, -20);
 
 	machine.train(features, targets);
 
@@ -34,19 +34,19 @@ void test_1d ()
 {
 	LogisticRegression machine;
 
-	Mat2d features = (Mat2d(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	Mat2d targets = (Mat2d(10, 1) <<  0, 0, 0, 0, 1, 1, 1, 1, 1, 1);
+	Matd features = (Matd(10, 1) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	Matd targets = (Matd(10, 1) <<  0, 0, 0, 0, 1, 1, 1, 1, 1, 1);
 
-	Mat2d test0 = (Mat2d(1, 1) << 1);
-	Mat2d test1 = (Mat2d(1, 1) << 2);
-	Mat2d test2 = (Mat2d(1, 1) << 3);
-	Mat2d test3 = (Mat2d(1, 1) << 4);
-	Mat2d test4 = (Mat2d(1, 1) << 5);
-	Mat2d test5 = (Mat2d(1, 1) << 6);
-	Mat2d test6 = (Mat2d(1, 1) << 7);
-	Mat2d test7 = (Mat2d(1, 1) << 8);
-	Mat2d test8 = (Mat2d(1, 1) << 9);
-	Mat2d test9 = (Mat2d(1, 1) << 10);
+	Matd test0 = (Matd(1, 1) << 1);
+	Matd test1 = (Matd(1, 1) << 2);
+	Matd test2 = (Matd(1, 1) << 3);
+	Matd test3 = (Matd(1, 1) << 4);
+	Matd test4 = (Matd(1, 1) << 5);
+	Matd test5 = (Matd(1, 1) << 6);
+	Matd test6 = (Matd(1, 1) << 7);
+	Matd test7 = (Matd(1, 1) << 8);
+	Matd test8 = (Matd(1, 1) << 9);
+	Matd test9 = (Matd(1, 1) << 10);
 
 	machine.train(features, targets);
 
@@ -70,17 +70,17 @@ void test_or ()
 	LogisticRegression machine;
 
 	// Test case: OR
-	Mat2d features = (Mat2d(4, 2) << 
+	Matd features = (Matd(4, 2) << 
 			0, 0, 
 			0, 1, 
 			1, 0, 
 			1, 1);
-	Mat2d targets = (Mat2d(4, 1) << 0, 1, 1, 1);
+	Matd targets = (Matd(4, 1) << 0, 1, 1, 1);
 
-	Mat2d test0 = (Mat2d(1, 2) << 0, 0); // -> 0
-	Mat2d test1 = (Mat2d(1, 2) << 0, 1); // -> 1
-	Mat2d test2 = (Mat2d(1, 2) << 1, 0); // -> 1
-	Mat2d test3 = (Mat2d(1, 2) << 1, 1); // -> 1
+	Matd test0 = (Matd(1, 2) << 0, 0); // -> 0
+	Matd test1 = (Matd(1, 2) << 0, 1); // -> 1
+	Matd test2 = (Matd(1, 2) << 1, 0); // -> 1
+	Matd test3 = (Matd(1, 2) << 1, 1); // -> 1
 
 	cout << "Features:\n" << features << endl;
 	cout << "Targets:\n" << targets << endl;
@@ -98,6 +98,7 @@ void test_or ()
 
 int main (int argc, char** argv)
 {
+	test_lin();
 	test_or();
 
 	return EXIT_SUCCESS;
