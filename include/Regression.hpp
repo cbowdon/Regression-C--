@@ -21,6 +21,8 @@ namespace ml
 			const Matd& get_params () const;
 
 		private:
+			// Pimpl idiom isn't strictly necessary here
+			// but would help if part of a larger project
 			struct impl;
 			std::unique_ptr<impl> pimpl;
 	};
